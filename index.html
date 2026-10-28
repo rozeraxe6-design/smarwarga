@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Laporkan dan pantau kondisi fasilitas publik bersama SmartWarga.">
+    <title>SmartWarga - Kota Cerdas untuk Masa Depan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/city-buildings.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#beranda" class="logo">🏙️ SmartWarga</a>
+            <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false"
+                aria-controls="navMenu" aria-label="Buka menu navigasi">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#beranda" class="active">Beranda</a></li>
+                <li><a href="#lapor">Lapor</a></li>
+                <li><a href="#lacak">Lacak</a></li>
+                <li><a href="#peta">Peta</a></li>
+                <li><a href="#edukasi">Edukasi</a></li>
+                <li>
+                    <button type="button" class="weather-trigger" id="btnCuaca" aria-haspopup="dialog"
+                        aria-controls="weatherModal">
+                        <span aria-hidden="true">🌤️</span> Cuaca
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <aside id="apiErrorNotice" class="api-error-notice" role="alert" hidden>
+        <span id="apiErrorMessage"></span>
+        <button type="button" id="btnCloseApiError" aria-label="Tutup pemberitahuan">&times;</button>
+    </aside>
+
+    <main>
+        <section class="hero" id="beranda">
+            <div class="container hero-layout">
+                <div class="hero-copy">
+                    <span class="badge">🌍 SDG 11 <span aria-hidden="true">•</span> Kota Berkelanjutan</span>
+                    <h1>Perubahan kota<br>dimulai dari <span class="highlight">warga.</span></h1>
+                    <p>Temukan masalah di sekitar, laporkan dengan mudah, lalu pantau perkembangannya. Bersama kita
+                        wujudkan Bandar Lampung yang lebih nyaman.</p>
+                    <div class="hero-buttons">
+                        <a href="#lapor" class="btn btn-primary">📝 Buat Laporan</a>
+                        <a href="#lacak" class="btn btn-outline">🔍 Lacak Laporan</a>
+                    </div>
+                    <p class="hero-note"><span aria-hidden="true">🔒</span> Laporan tersimpan di browser dan perangkat ini.</p>
+                </div>
+                <aside class="hero-card" aria-label="Langkah mudah menggunakan SmartWarga">
+                    <div class="hero-card-top">
+                        <span class="hero-card-icon" aria-hidden="true">🏙️</span>
+                        <span class="hero-card-label">Warga bergerak, kota bertumbuh</span>
+                    </div>
+                    <h2>Aksi kecil, dampak nyata.</h2>
+                    <p>Mulai dari satu laporan yang jelas dan lokasi yang tepat.</p>
+                    <div class="hero-card-steps">
+                        <div><span>01</span><strong>Temukan masalah</strong><span aria-hidden="true">✓</span></div>
+                        <div><span>02</span><strong>Kirim laporan</strong><span aria-hidden="true">→</span></div>
+                        <div><span>03</span><strong>Pantau prosesnya</strong><span aria-hidden="true">⌁</span></div>
+                    </div>
+                    <a href="#cara-kerja" class="hero-card-link">Lihat cara kerjanya <span aria-hidden="true">↗</span></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number" id="totalLaporan">0</div>
+                        <div class="stat-label">Total Laporan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✔️</div>
+                        <div class="stat-number" id="totalSelesai">0</div>
+                        <div class="stat-label">Selesai Ditangani</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-number" id="totalProses">0</div>
+                        <div class="stat-label">Sedang Diproses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👤</div>
+                        <div class="stat-number" id="totalWarga">0</div>
+                        <div class="stat-label">Warga Aktif</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-sdg">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">🌱 Sustainable Development Goals</span>
+                    <h2>Mendukung SDG 11: Kota & Permukiman Berkelanjutan</h2>
+                </div>
+                <div class="sdg-content">
+                    <div class="sdg-text">
+                        <p>SDG 11 bertujuan menjadikan kota dan permukiman <strong>inklusif, aman, tangguh, dan
+                                berkelanjutan</strong>. Target 11.3 mendorong pengelolaan permukiman yang
+                            <strong>partisipatif</strong>.</p>
+                        <p>SmartWarga memberdayakan warga untuk memantau dan melaporkan kondisi fasilitas publik,
+                            menciptakan tata kelola kota yang transparan dan berbasis data.</p>
+                        <div class="sdg-features">
+                            <div class="feature">
+                                <span class="feature-icon">🤝</span>
+                                <div><h4>Partisipatif</h4><p>Warga terlibat aktif dalam pengawasan kota</p></div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">📍</span>
+                                <div><h4>Transparan</h4><p>Status laporan dapat dilacak siapa saja</p></div>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🧠</span>
+                                <div><h4>Cerdas</h4><p>Berbasis data dan teknologi modern</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="cara-kerja">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Cara Kerja SmartWarga</h2>
+                    <p>Hanya 3 langkah mudah untuk berpartisipasi</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Laporkan</h3>
+                        <p>Isi form laporan dengan foto, lokasi, dan deskripsi kerusakan fasilitas publik.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Pantau</h3>
+                        <p>Lacak status laporan Anda dari Diterima hingga Selesai.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Nikmati</h3>
+                        <p>Rasakan fasilitas publik yang lebih baik berkat kolaborasi warga dan pemerintah.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-header" id="lapor">
+            <div class="container">
+                <h1>📝 Buat Laporan di Bandar Lampung</h1>
+                <p>Laporkan kerusakan fasilitas publik di wilayah Bandar Lampung.</p>
+            </div>
+        </section>
+        <section class="form-section">
+            <div class="container">
+                <form id="formLaporan" class="form-card">
+                    <p role="note" style="margin-bottom: 1rem; color: var(--gray);">
+                        Mode lokal: laporan tersimpan hanya di browser dan perangkat ini. Laporan tidak dikirim ke admin
+                        dan tidak dibagikan ke perangkat lain.
+                    </p>
+                    <div class="form-group">
+                        <label for="nama">Nama Pelapor *</label>
+                        <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="contoh@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kategori">Kategori Kerusakan *</label>
+                        <select id="kategori" name="kategori" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            <option value="Jalan Rusak">🛣️ Jalan Rusak</option>
+                            <option value="Lampu Mati">💡 Lampu Penerangan Mati</option>
+                            <option value="Drainase">🌊 Drainase Tersumbat</option>
+                            <option value="Taman">🌳 Taman/Fasilitas Umum Rusak</option>
+                            <option value="Sampah">🗑️ Penumpukan Sampah</option>
+                            <option value="Lainnya">📌 Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alamat">Alamat/Lokasi *</label>
+                        <input type="text" id="alamat" name="alamat"
+                            placeholder="Contoh: Jl. Merdeka No. 10, Bandar Lampung" required>
+                        <p id="addressMapStatus" class="address-map-status" role="status" aria-live="polite"></p>
+                        <div id="addressCandidates" class="address-candidates" aria-label="Hasil pencarian alamat"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mapForm">Lokasi di Peta (Bandar Lampung)</label>
+                        <div id="mapForm" style="height: 300px; border-radius: 10px; margin-bottom: 10px;"></div>
+                        <small>Pencarian alamat menggunakan <a href="https://www.openstreetmap.org/copyright"
+                                target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>.
+                            Pencarian dilakukan setelah Anda selesai mengetik dan meninggalkan kolom alamat.
+                            Pilih hasil yang paling sesuai dan pastikan pin sudah tepat sebelum mengirim laporan.</small>
+                        <button type="button" id="btnLokasi" class="btn btn-outline btn-sm">📍 Gunakan Lokasi Saya</button>
+                        <input type="hidden" id="lat" name="lat">
+                        <input type="hidden" id="lng" name="lng">
+                    </div>
+                    <div class="form-group">
+                        <label for="deskripsi">Deskripsi Kerusakan *</label>
+                        <textarea id="deskripsi" name="deskripsi" rows="4"
+                            placeholder="Jelaskan kerusakan secara detail..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="foto">Upload Foto Bukti</label>
+                        <input type="file" id="foto" name="foto" accept="image/jpeg,image/png">
+                        <small>Format: JPG, PNG. Maks: 2MB</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">🚀 Kirim Laporan</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="page-header" id="lacak">
+            <div class="container">
+                <h1>🔍 Lacak Status Laporan</h1>
+                <p>Masukkan ID Laporan atau Email Anda untuk melihat status terkini.</p>
+            </div>
+        </section>
+        <section class="track-section">
+            <div class="container">
+                <div class="track-box">
+                    <div class="form-group">
+                        <label for="searchLaporan">Cari Laporan</label>
+                        <div class="search-group">
+                            <input type="text" id="searchLaporan" placeholder="Masukkan ID Laporan atau Email">
+                            <button id="btnCari" class="btn btn-primary">Cari</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="hasilLacak" class="hasil-lacak" style="display: none;"></div>
+            </div>
+        </section>
+
+        <section class="page-header" id="peta">
+            <div class="container">
+                <h1>🗺️ Peta Sebaran Bandar Lampung</h1>
+                <p>Lihat sebaran laporan fasilitas publik di wilayah Bandar Lampung.</p>
+            </div>
+        </section>
+        <section class="map-section">
+            <div class="container">
+                <div class="map-filter">
+                    <button class="filter-btn active" data-filter="all">Semua</button>
+                    <button class="filter-btn" data-filter="Diterima">🟡 Diterima</button>
+                    <button class="filter-btn" data-filter="Diproses">🟠 Diproses</button>
+                    <button class="filter-btn" data-filter="Selesai">🟢 Selesai</button>
+                </div>
+                <div id="mapFull" style="height: 600px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"></div>
+                <p style="margin-top: 0.75rem; color: var(--gray);">Peta dan laporan dibatasi pada area Bandar Lampung.</p>
+                <div class="map-legend">
+                    <h4>Keterangan:</h4>
+                    <div class="legend-items">
+                        <span><span class="dot dot-yellow"></span> Diterima</span>
+                        <span><span class="dot dot-orange"></span> Diproses</span>
+                        <span><span class="dot dot-green"></span> Selesai</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="page-header" id="edukasi">
+            <div class="container">
+                <h1>📚 Edukasi & Panduan Warga</h1>
+                <p>Empowering Global Innovators for an Intelligent Future</p>
+            </div>
+        </section>
+        <section class="form-section">
+            <div class="container">
+                <div class="sdg-content">
+                    <h2 style="background: var(--gradient-smart); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2rem; margin-bottom: 1rem;">Apa itu SDG 11?</h2>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: var(--gray);">
+                        <strong>Sustainable Development Goals (SDG) 11</strong> bertujuan menjadikan kota dan
+                        permukiman <strong>inklusif, aman, tangguh, dan berkelanjutan</strong>. Target 11.3 mendorong
+                        urbanisasi yang inklusif dan pengelolaan permukiman yang partisipatif, terpadu, dan
+                        berkelanjutan.
+                    </p>
+                    <p style="font-size: 1.1rem; line-height: 1.8; color: var(--gray); margin-top: 1rem;">
+                        <strong>SmartWarga</strong> memberdayakan masyarakat untuk memantau, melaporkan, dan mengawasi
+                        kondisi fasilitas publik di lingkungan mereka.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section class="how-it-works" style="background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">📖 Panduan Lengkap</span>
+                    <h2>Panduan & Informasi Penting</h2>
+                    <p>Pelajari cara menggunakan SmartWarga dan kenali target pengguna platform kami</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">📖</div>
+                        <h3>Panduan Melapor</h3>
+                        <p style="text-align: left; line-height: 1.8;">
+                            1. Buka menu <strong>Lapor</strong>.<br>
+                            2. Isi nama dan email.<br>
+                            3. Pilih kategori kerusakan.<br>
+                            4. Tandai lokasi di peta atau gunakan GPS.<br>
+                            5. Kirim laporan dan simpan ID untuk tracking.
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">👥</div>
+                        <h3>Target Pengguna</h3>
+                        <p style="text-align: left; line-height: 1.8;">
+                            SmartWarga membantu warga melaporkan kerusakan, pengurus RT/RW memantau laporan, dan
+                            pemerintah daerah mendapatkan data untuk perencanaan kota.
+                        </p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">💡</div>
+                        <h3>Tips Warga Cerdas</h3>
+                        <p style="text-align: left; line-height: 1.8;">
+                            🌱 Jaga kebersihan lingkungan.<br>
+                            🌳 Rawat fasilitas umum.<br>
+                            📸 Sertakan informasi yang jelas.<br>
+                            🤝 Ajak warga lain untuk berpartisipasi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="form-section" style="background: white;">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: var(--secondary);">❓ FAQ</span>
+                    <h2>Pertanyaan yang Sering Diajukan</h2>
+                </div>
+                <div class="sdg-content" style="max-width: 900px; margin: 0 auto;">
+                    <details class="faq-item">
+                        <summary>Apakah laporan saya benar-benar ditindaklanjuti?</summary>
+                        <p>SmartWarga adalah prototype alur pelaporan partisipatif. Dalam implementasi nyata, laporan diteruskan kepada pengurus RT/RW atau dinas terkait.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Bagaimana cara melacak status laporan?</summary>
+                        <p>Masukkan ID laporan atau email yang digunakan saat melapor pada bagian <a href="#lacak">Lacak</a>.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Di mana laporan saya disimpan?</summary>
+                        <p>Laporan tersimpan di penyimpanan browser pada perangkat ini. Data tidak dikirim ke admin dan tidak otomatis tersedia di perangkat lain.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Apa hubungan SmartWarga dengan SDG 11?</summary>
+                        <p>SmartWarga mendukung Target 11.3 melalui partisipasi warga dalam membangun kota yang berkelanjutan.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+        <section class="stats" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Bandar Lampung & SDG 11</h2>
+                    <p>Data penduduk kota dan fakta pembangunan berkelanjutan</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏙️</div>
+                        <div class="stat-number">1.088.200</div>
+                        <div class="stat-label">
+                            Perkiraan penduduk Bandar Lampung (pertengahan 2025)
+                            <br>
+                            <a href="https://bandarlampungkota.bps.go.id/id/publication"
+                                target="_blank" rel="noopener noreferrer">Sumber: BPS Kota Bandar Lampung,
+                                <em>Kota Bandar Lampung Dalam Angka 2026</em></a>
+                        </div>
+                    </div>
+                    <div class="stat-card"><div class="stat-icon">🌍</div><div class="stat-number">17</div><div class="stat-label">Tujuan SDGs yang harus dicapai 2030</div></div>
+                    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-number">169</div><div class="stat-label">Target spesifik dalam 17 SDGs</div></div>
+                    <div class="stat-card"><div class="stat-icon">🏘️</div><div class="stat-number">10</div><div class="stat-label">Target dalam SDG 11</div></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="weather-modal" id="weatherModal" role="dialog" aria-modal="true"
+        aria-labelledby="weatherTitle" aria-hidden="true" hidden>
+        <section class="weather-card">
+            <button type="button" class="weather-close" id="btnTutupCuaca" aria-label="Tutup">&times;</button>
+            <p class="weather-location">📍 Cuaca saat ini</p>
+            <h2 id="weatherTitle">Bandar Lampung</h2>
+            <button type="button" class="btn btn-outline" id="btnCuacaLokasi">
+                📍 Gunakan Lokasi Saya
+            </button>
+            <label class="weather-district-label" for="weatherDistrict">Kecamatan Anda (opsional)</label>
+            <select id="weatherDistrict" class="weather-district-select">
+                <option value="">Pilih kecamatan</option>
+                <option>Bumi Waras</option>
+                <option>Enggal</option>
+                <option>Kedamaian</option>
+                <option>Kedaton</option>
+                <option>Kemiling</option>
+                <option>Labuhan Ratu</option>
+                <option>Langkapura</option>
+                <option>Panjang</option>
+                <option>Rajabasa</option>
+                <option>Sukabumi</option>
+                <option>Sukarame</option>
+                <option>Tanjung Karang Barat</option>
+                <option>Tanjung Karang Pusat</option>
+                <option>Tanjung Karang Timur</option>
+                <option>Tanjung Senang</option>
+                <option>Teluk Betung Barat</option>
+                <option>Teluk Betung Selatan</option>
+                <option>Teluk Betung Timur</option>
+                <option>Teluk Betung Utara</option>
+                <option>Way Halim</option>
+            </select>
+            <small class="weather-location-note">
+                Pilih kecamatan Anda, lalu gunakan GPS untuk mengambil cuaca di lokasi perangkat. Koordinat GPS dan
+                nama wilayah akan dicari melalui OpenStreetMap.
+            </small>
+            <div id="weatherContent" class="weather-content" aria-live="polite">
+                <p>Tekan tombol untuk memuat cuaca terkini.</p>
+            </div>
+            <div class="weather-actions">
+                <button type="button" class="btn btn-primary" id="btnMuatCuaca">Muat Cuaca</button>
+                <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Sumber data: Open-Meteo</a>
+            </div>
+        </section>
+    </div>
+
+    <section class="chat-widget" aria-label="Asisten SmartWarga">
+        <div class="chat-panel" id="chatPanel" role="dialog" aria-labelledby="chatTitle" hidden>
+            <header class="chat-header">
+                <div class="chat-avatar" aria-hidden="true">🤖</div>
+                <div>
+                    <h2 id="chatTitle">Asisten SmartWarga</h2>
+                    <p>Tanya seputar laporan warga</p>
+                </div>
+                <button type="button" class="chat-close" id="chatClose" aria-label="Tutup chatbot">&times;</button>
+            </header>
+            <div class="chat-privacy">
+                Jawaban dibuat AI Gemini. Pesan dikirim ke Google; jangan sertakan data pribadi atau rahasia.
+            </div>
+            <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
+                <p class="chat-message assistant">Halo! Saya bisa membantu menjelaskan cara membuat dan melacak laporan SmartWarga.</p>
+            </div>
+            <div class="chat-suggestions" id="chatSuggestions">
+                <button type="button">Bagaimana cara membuat laporan?</button>
+                <button type="button">Bagaimana cara melacak laporan?</button>
+            </div>
+            <form class="chat-form" id="chatForm">
+                <label class="visually-hidden" for="chatInput">Tulis pertanyaan</label>
+                <textarea id="chatInput" rows="1" maxlength="1200" placeholder="Tulis pertanyaan..." required></textarea>
+                <button type="submit" id="chatSend" aria-label="Kirim pertanyaan">Kirim</button>
+            </form>
+        </div>
+        <button type="button" class="chat-launcher" id="chatLauncher"
+            aria-expanded="false" aria-controls="chatPanel">
+            <span aria-hidden="true">💬</span><span>Tanya AI</span>
+        </button>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>🏙️ SmartWarga</h3>
+                    <p>Empowering Global Innovators for an Intelligent Future</p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">Mendukung SDG 11: Kota dan Permukiman yang Berkelanjutan</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigasi</h4>
+                    <a href="#beranda">Beranda</a>
+                    <a href="#lapor">Buat Laporan</a>
+                    <a href="#lacak">Lacak Laporan</a>
+                    <a href="#peta">Peta Sebaran</a>
+                    <a href="#edukasi">Edukasi</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SmartWarga | Lomba Nasional Web Desain Gematik</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp1K4zFypWfGsehQCIFxr4LfyX7uNqrLM&amp;callback=initGoogleMaps&amp;loading=async"></script>
+</body>
+
+</html>
